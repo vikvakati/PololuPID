@@ -1,0 +1,6 @@
+{
+    "sketch": "PololuPID.ino",
+    "port": "COM3",
+    "board": "pololu-a-star:avr:a-star32U4",
+    "output": "../ArduinoOutput"
+}
