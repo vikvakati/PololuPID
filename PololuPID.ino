@@ -37,37 +37,15 @@ uint16_t baseSpeed;
 
 uint16_t calibrationSpeed;
 
-// PID configuration: This example is configured for a default
-// proportional constant of 1/4 and a derivative constant of 1.
-uint16_t proportional; // coefficient of the P term * 256
-uint16_t derivative; // coefficient of the D term * 256
+// PID configuration:
+// proportional constant of 0.35 and a derivative constant of 0.35.
+uint16_t proportional; 
+uint16_t derivative;
 
 // monitor distance traveled by each wheel
 const char encoderErrorLeft[] PROGMEM = "!<c2";
 const char encoderErrorRight[] PROGMEM = "!<e2";
 char report[80];
-
-void selectHyper()
-{
-  maxSpeed = 400;
-  minSpeed = 0;
-  baseSpeed = 400;
-  calibrationSpeed = 120;
-  proportional = 64; // P coefficient = 1/4
-  derivative = 256; // D coefficient = 1
-  turnTime = 400;
-}
-
-void selectStandard()
-{
-  maxSpeed = 200;
-  minSpeed = 0;
-  baseSpeed = maxSpeed;
-  calibrationSpeed = 60;
-  proportional = 64; // P coefficient = 1/4
-  derivative = 256; // D coefficient = 1
-  turnTime = 800;
-}
 
 void selectTurtle()
 {
@@ -75,38 +53,12 @@ void selectTurtle()
   minSpeed = 0;
   baseSpeed = maxSpeed;
   calibrationSpeed = 50;
-  proportional = 1; // P coefficient = 1/4
-  derivative = 1;   // D coefficient = 1
+  proportional = 0.35; // P coefficient = 0.35
+  derivative = 0.35;   // D coefficient = 0.35
   turnTime = 450;
 }
 
 PololuMenu<typeof(display)> menu;
-
-// Menu for user to select speed
-void selectEdition()
-{
-  display.clear();
-  display.print(F("Select"));
-  display.gotoXY(0,1);
-  display.print(F("edition"));
-  delay(1000);
-
-  static const PololuMenuItem items[] = {
-    { F("Standard"), selectStandard },
-    { F("Turtle"), selectTurtle },
-    { F("Hyper"), selectHyper },
-  };
-
-  menu.setItems(items, 3);
-  menu.setDisplay(display);
-  menu.setBuzzer(buzzer);
-  menu.setButtons(buttonA, buttonB, buttonC);
-
-  while(!menu.select());
-
-  display.gotoXY(0,1);
-  display.print("OK!  ...");
-}
 
 // Sets up special characters to display bar graphs.
 void loadCustomCharacters()
@@ -200,13 +152,10 @@ void followLine()
   // line, which corresponds to position 2000.
   int16_t error = position - 2000;
 
-  
   // Get motor speed difference using proportional and derivative
   // PID terms (the integral term is generally not very useful
   // for line following).
-  // int16_t speedDifference = error * (int32_t)proportional / 256  + (error - lastError) * (int32_t)derivative / 256;
-  //TODO
-  int16_t speedDifference = error * (int32_t)proportional * (0.35)  + (error - lastError) * (int32_t)derivative * (0.35);
+  int16_t speedDifference = error * (int32_t)proportional  + (error - lastError) * (int32_t)derivative;
 
   lastError = error;
   
@@ -348,7 +297,7 @@ void setup()
   loadCustomCharacters();
 
   // Play a welcome song
-  //buzzer.play(">g32>>c32");
+  buzzer.play(">g32>>c32");
 
   selectTurtle();
 
@@ -366,8 +315,8 @@ void setup()
   // Play music and wait for it to finish before driving.
   display.clear();
   display.print(F("Go!"));
-  //buzzer.play("L16 cdegreg4");
-  //while(buzzer.isPlaying());
+  buzzer.play("L16 cdegreg4");
+  while(buzzer.isPlaying());
   
   // initialize the start time
   start_time = millis();
