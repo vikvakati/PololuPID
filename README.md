@@ -23,4 +23,4 @@ Connect the robot to your computer, and upload the code using the Arduino IDE. O
 This code is based on the documentation provided by [Pololu](https://www.pololu.com/docs/0J83). 
 
 ## License
-This code is released under the [MIT license](LICENSE).
+This code is released under the [MIT license](LICENCE).
